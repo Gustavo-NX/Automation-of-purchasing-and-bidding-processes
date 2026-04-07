@@ -1,8 +1,10 @@
 import os
 import dados
 import pyautogui
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
@@ -34,7 +36,7 @@ nova_aba = next(aba for aba in abas_depois if aba not in abas_antes)
 navegador.switch_to.window(nova_aba)
 
 try:
-    navegador.find_element(By.CLASS_NAME, "zebra2")
+    navegador.find_element(By.CLASS_NAME, 'zebra2')
     existe = True
 except NoSuchElementException:
     existe = False 
@@ -49,7 +51,7 @@ else:
     navegador.switch_to.window(menu)
 
 espera.until(
-    EC.element_to_be_clickable((By.LINK_TEXT, "Entrada de Processos"))
+    EC.element_to_be_clickable((By.LINK_TEXT, 'Entrada de Processos'))
 ).click()
 
 espera.until(EC.new_window_is_opened(abas_antes))
@@ -61,5 +63,21 @@ espera.until(
     EC.element_to_be_clickable((By.XPATH, "//a[@title='Adicionar']"))
 ).click()
 
+selectModalidade = Select(navegador.find_element(By.NAME, 'modalidade'))
+selectModalidade.select_by_value('3')
+
+selectChapa = Select(navegador.find_element(By.NAME, 'chapa'))
+selectChapa.select_by_value('40159')
+
+dataAtual = datetime.now().strftime("%d/%m/%Y")
+campoData = navegador.find_element(By.NAME, "data")
+navegador.execute_script(
+    "arguments[0].value = arguments[1];", campoData, dataAtual
+)
+
+selectStatus = Select(navegador.find_element(By.NAME, 'status'))
+selectStatus.select_by_value('1')
+
+botaopSalvar = navegador.find_element(By.NAME, 'bt').click()
 
 sleep(10)
