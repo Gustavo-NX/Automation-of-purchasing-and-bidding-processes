@@ -44,40 +44,36 @@ if existe:
     navegador.close()
     espera.until(EC.number_of_windows_to_be(1))
     navegador.switch_to.window(menu)
+    espera.until(
+    EC.element_to_be_clickable((By.LINK_TEXT, 'Entrada de Processos'))).click()
+    espera.until(EC.new_window_is_opened(abas_antes))
+    abas_depois = navegador.window_handles
+    nova_aba = next(aba for aba in abas_depois if aba not in abas_antes)
+    navegador.switch_to.window(nova_aba)
+
+    espera.until(EC.element_to_be_clickable((By.XPATH, "//a[@title='Adicionar']"))).click()
+
+    selectModalidade = Select(navegador.find_element(By.NAME, 'modalidade'))
+    selectModalidade.select_by_value('3')
+
+    selectChapa = Select(navegador.find_element(By.NAME, 'chapa'))
+    selectChapa.select_by_value('40159')
+
+    dataAtual = datetime.now().strftime("%d/%m/%Y")
+    campoData = navegador.find_element(By.NAME, "data")
+    navegador.execute_script(
+        "arguments[0].value = arguments[1];", campoData, dataAtual
+    )
+
+    selectStatus = Select(navegador.find_element(By.NAME, 'status'))
+    selectStatus.select_by_value('1')
+    botaopSalvar = navegador.find_element(By.NAME, 'bt').click()
 else:
     pyautogui.alert("NENHUMA RMS ENCONTRADA")
     navegador.close()
     espera.until(EC.number_of_windows_to_be(1))
     navegador.switch_to.window(menu)
 
-espera.until(
-    EC.element_to_be_clickable((By.LINK_TEXT, 'Entrada de Processos'))
-).click()
 
-espera.until(EC.new_window_is_opened(abas_antes))
-abas_depois = navegador.window_handles
-nova_aba = next(aba for aba in abas_depois if aba not in abas_antes)
-navegador.switch_to.window(nova_aba)
-
-espera.until(
-    EC.element_to_be_clickable((By.XPATH, "//a[@title='Adicionar']"))
-).click()
-
-selectModalidade = Select(navegador.find_element(By.NAME, 'modalidade'))
-selectModalidade.select_by_value('3')
-
-selectChapa = Select(navegador.find_element(By.NAME, 'chapa'))
-selectChapa.select_by_value('40159')
-
-dataAtual = datetime.now().strftime("%d/%m/%Y")
-campoData = navegador.find_element(By.NAME, "data")
-navegador.execute_script(
-    "arguments[0].value = arguments[1];", campoData, dataAtual
-)
-
-selectStatus = Select(navegador.find_element(By.NAME, 'status'))
-selectStatus.select_by_value('1')
-
-botaopSalvar = navegador.find_element(By.NAME, 'bt').click()
 
 sleep(10)
