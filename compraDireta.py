@@ -11,6 +11,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 
+usuario = os.path.expanduser('~')
+
 navegador = webdriver.Chrome()
 navegador.maximize_window()
 espera = WebDriverWait(navegador, 15)
@@ -25,7 +27,7 @@ menu = navegador.current_window_handle
 abas_antes = navegador.window_handles
 
 espera.until(
-    EC.element_to_be_clickable((By.LINK_TEXT, "Adicionar itens nos processos de compra"))
+    EC.element_to_be_clickable((By.LINK_TEXT, 'Adicionar itens nos processos de compra'))
 ).click()
 
 espera.until(EC.new_window_is_opened(abas_antes))
@@ -68,6 +70,24 @@ if existe:
     selectStatus = Select(navegador.find_element(By.NAME, 'status'))
     selectStatus.select_by_value('1')
     botaopSalvar = navegador.find_element(By.NAME, 'bt').click()
+
+    espera.until(
+    EC.element_to_be_clickable((By.LINK_TEXT, 'Processo'))
+    ).click()
+
+    numeroProcesso = espera.until(
+        EC.presence_of_element_located((By.XPATH, "//table/tbody/tr[position()>1][1]/td[1]"))
+    ).text
+
+    pastaDocumentos = os.path.join(usuario, 'Documents')
+
+    pastaProcessos = os.path.join(pastaDocumentos, 'Processos')
+
+    os.makedirs(pastaProcessos, exist_ok=True)
+
+    pastaProcesso = os.path.join(pastaProcessos, f'Pocesso {numeroProcesso}')
+
+    os.makedirs(pastaProcesso, exist_ok=True)
 else:
     pyautogui.alert("NENHUMA RMS ENCONTRADA")
     navegador.close()
